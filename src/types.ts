@@ -6,6 +6,7 @@ export interface Token {
   name: string;
   symbol: string;
   decimal: string;
+  chainId: string;
 }
 export interface RouterConfig {
   id: string;
