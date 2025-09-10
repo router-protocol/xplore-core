@@ -34,7 +34,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to NPM
-        run: npm publish
+        run: bun publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -65,9 +65,9 @@ jobs:
 
       - name: Setup package for GitHub Packages
         run: |
-          echo "Package already scoped as @routerprotocol/xplore-ui"
+          echo "Package already scoped as @routerprotocol/xplore-core"
 
       - name: Publish to GitHub Packages
-        run: npm publish
+        run: bun publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

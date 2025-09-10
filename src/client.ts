@@ -11,7 +11,7 @@ export class RouterAggregator {
   constructor(options: AggregatorOptions) {
     this.routers = options.routers;
     this.defaultTimeout = options.defaultTimeout ?? 5000;
-    this.maxRetries = options.maxRetries ?? 3;
+    this.maxRetries = options.maxRetries ?? 4;
   }
 
   /**

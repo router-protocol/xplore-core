@@ -1,5 +1,5 @@
 {
-  "name": "@routerprotocol/xplore-ui",
+  "name": "@routerprotocol/xplore-core",
   "version": "1.0.0",
   "description": "TypeScript SDK for router aggregation",
   "main": "dist/index.js",

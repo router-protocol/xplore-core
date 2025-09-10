@@ -66,10 +66,10 @@ jobs:
 
       - name: Verify package name
         run: |
-          echo "Package already correctly scoped as @routerprotocol/xplore-ui"
+          echo "Package already correctly scoped as @routerprotocol/xplore-core"
 
       - name: Publish beta to GitHub Packages
-        run: npm publish --tag beta --access public
+        run: bun publish --tag beta --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -78,7 +78,7 @@ jobs:
         with:
           script: |
             const betaVersion = '${{ steps.version.outputs.beta_version }}';
-            const packageName = `@routerprotocol/xplore-ui`;
+            const packageName = `@routerprotocol/xplore-core`;
             
             const comment = `🚀 **Beta Release Published**
             

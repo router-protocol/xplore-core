@@ -1,4 +1,4 @@
-# @routerprotocol/xplore-ui
+# @routerprotocol/xplore-core
 
 A high-performance TypeScript SDK for router aggregation with parallel request handling and comprehensive response analysis.
 
@@ -20,22 +20,22 @@ A high-performance TypeScript SDK for router aggregation with parallel request h
 
 ```bash
 # With npm
-npm install @routerprotocol/xplore-ui
+npm install @routerprotocol/xplore-core
 
 # With yarn
-yarn add @routerprotocol/xplore-ui
+yarn add @routerprotocol/xplore-core
 
 # With pnpm
-pnpm add @routerprotocol/xplore-ui
+pnpm add @routerprotocol/xplore-core
 
 # With bun
-bun add @routerprotocol/xplore-ui
+bun add @routerprotocol/xplore-core
 ```
 
 ## 🚀 Quick Start
 
 ```typescript
-import { RouterAggregator } from '@routerprotocol/xplore-ui';
+import { RouterAggregator } from '@routerprotocol/xplore-core';
 
 // Configure your routers
 const routers = [
@@ -140,7 +140,7 @@ import {
   getFastestResponse, 
   getSuccessRate, 
   groupResponsesByStatus 
-} from '@routerprotocol/xplore-ui';
+} from '@routerprotocol/xplore-core';
 
 const result = await aggregator.execute('/endpoint');
 
@@ -251,7 +251,7 @@ When you create a pull request, a beta version is automatically published:
 
 ```bash
 # Install beta version (from PR comment)
-bun add @routerprotocol/xplore-ui@0.0.0-beta.pr-123.abc1234
+bun add @routerprotocol/xplore-core@0.0.0-beta.pr-123.abc1234
 ```
 
 ## 📄 License
