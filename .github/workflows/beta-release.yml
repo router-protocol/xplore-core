@@ -69,7 +69,7 @@ jobs:
           echo "Package already correctly scoped as @routerprotocol/xplore-ui"
 
       - name: Publish beta to GitHub Packages
-        run: npm publish --tag beta
+        run: npm publish --tag beta --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
