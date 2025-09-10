@@ -37,7 +37,6 @@
     "semantic-release": "^24.2.7",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4",
-    "esbuild": "^0.25.9"
+    "vitest": "^3.2.4"
   }
 }
