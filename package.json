@@ -1,6 +1,6 @@
 {
   "name": "@routerprotocol/xplore-ui",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "TypeScript SDK for router aggregation",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -21,7 +21,12 @@
     "release": "semantic-release",
     "prepublishOnly": "bun run build"
   },
-  "keywords": ["sdk", "typescript", "router", "aggregator"],
+  "keywords": [
+    "sdk",
+    "typescript",
+    "router",
+    "aggregator"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "bun@1.1.0",
