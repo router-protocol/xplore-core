@@ -30,6 +30,9 @@
   "author": "",
   "license": "ISC",
   "packageManager": "bun@1.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
