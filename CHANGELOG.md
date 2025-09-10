@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/router-protocol/xplore-core/compare/v1.1.0...v1.2.0) (2025-09-10)
+
+
+### Features
+
+* to be published ([dd5a283](https://github.com/router-protocol/xplore-core/commit/dd5a2830398cbcd78544dc01f76fbb146ab18257))
+
 # [1.1.0](https://github.com/router-protocol/xplore-core/compare/v1.0.0...v1.1.0) (2025-09-10)
 
 
