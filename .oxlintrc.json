@@ -1,9 +1,9 @@
 {
   "rules": {
-    "typescript": "all",
-    "correctness": "all",
-    "suspicious": "all",
-    "perf": "all"
+    "typescript": "error",
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
   },
   "env": {
     "node": true,
