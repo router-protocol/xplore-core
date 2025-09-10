@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-This is a Bun TypeScript SDK template. Common commands:
+This is a Bun TypeScript SDK template with comprehensive CI/CD workflows. Common commands:
 
 - `bun install` - Install dependencies
 - `bun run build` - Build the SDK (outputs to `dist/`)
@@ -12,6 +12,7 @@ This is a Bun TypeScript SDK template. Common commands:
 - `bun run lint` - Run oxlint linter
 - `bun run typecheck` - Run TypeScript type checking
 - `bun run test` - Run tests with vitest
+- `bun run release` - Run semantic release (automated in CI)
 
 ## Architecture
 
@@ -29,6 +30,8 @@ This is a TypeScript SDK template for router aggregation with the following stru
 - oxlint for fast linting instead of ESLint
 - The `RouterAggregator` class executes requests in parallel using `Promise.allSettled()` and provides both successful and failed response categorization
 - All router responses include timing information and are typed generically for flexibility
+- Comprehensive CI/CD with Node 20+ and Bun runtime testing
+- Automated semantic releases with beta deployments on PRs
 
 ## Usage Guide
 
@@ -178,10 +181,10 @@ Before setting up workflows, analyze project requirements:
 | Full-Stack | All deployment types | Performance, Security |
 
 **Technology-Specific Recommendations:**
-- **Bun projects**: Use bun install with native performance
+- **Bun projects**: Use bun install with native performance, dual Node/Bun testing
 - **TypeScript**: Enable strict type checking in CI
-- **Docker**: Multi-stage builds for optimization
-- **Monorepos**: Selective workflow triggering
+- **Beta testing**: Use PR-based beta releases for early feedback
+- **Semantic releases**: Follow conventional commits for automated versioning
 
 ### 6. Best Practices
 
