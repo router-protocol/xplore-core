@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/router-protocol/xplore-core/compare/v1.0.0...v1.1.0) (2025-09-10)
+
+
+### Features
+
+* add chainId property to Token interface in types.ts ([c307dd2](https://github.com/router-protocol/xplore-core/commit/c307dd2dedb1e8953cebc1959d13713b92ee4ea4))
+
 # 1.0.0 (2025-09-10)
 
 
