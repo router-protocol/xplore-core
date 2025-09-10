@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "typescript": "all",
+    "correctness": "all",
+    "suspicious": "all",
+    "perf": "all"
+  },
+  "env": {
+    "node": true,
+    "es2022": true
+  }
+}
