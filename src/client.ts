@@ -3,7 +3,7 @@ import type { AggregatorOptions, AggregatorResult, RouterConfig, RouterResponse 
 /**
  * Router Aggregator Client
  */
-export class RouterAggregator {
+export class PremiumRouterAggregator {
   private readonly routers: RouterConfig[];
   private readonly defaultTimeout: number;
   private readonly maxRetries: number;

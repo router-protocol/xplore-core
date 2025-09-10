@@ -2,6 +2,11 @@
  * Core types for the Router Aggregator SDK
  */
 
+export interface Token {
+  name: string;
+  symbol: string;
+  decimal: string;
+}
 export interface RouterConfig {
   id: string;
   name: string;
