@@ -2,8 +2,8 @@
 
 A high-performance TypeScript SDK for router aggregation with parallel request handling and comprehensive response analysis.
 
-[![CI](https://github.com/devaf/router-aggregator-ts-core/actions/workflows/ci.yml/badge.svg)](https://github.com/devaf/router-aggregator-ts-core/actions/workflows/ci.yml)
-[![Release](https://github.com/devaf/router-aggregator-ts-core/actions/workflows/release.yml/badge.svg)](https://github.com/devaf/router-aggregator-ts-core/actions/workflows/release.yml)
+[![CI](https://github.com/router-protocol/xplore-core/actions/workflows/ci.yml/badge.svg)](https://github.com/router-protocol/xplore-core/actions/workflows/ci.yml)
+[![Release](https://github.com/router-protocol/xplore-core/actions/workflows/release.yml/badge.svg)](https://github.com/router-protocol/xplore-core/actions/workflows/release.yml)
 [![npm version](https://badge.fury.io/js/@routerprotocol%2Fxplore-ui.svg)](https://badge.fury.io/js/@routerprotocol%2Fxplore-ui)
 
 ## ✨ Features
@@ -198,8 +198,8 @@ const aggregator = new RouterAggregator(routers, options);
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/router-aggregator-ts-core.git
-cd router-aggregator-ts-core
+git clone https://github.com/yourusername/xplore-core.git
+cd xplore-core
 
 # Install dependencies
 bun install

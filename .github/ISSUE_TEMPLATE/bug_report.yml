@@ -3,7 +3,7 @@ description: File a bug report to help us improve
 title: "[Bug]: "
 labels: ["bug", "triage"]
 assignees:
-  - devaf
+  - jdRouterP
 
 body:
   - type: markdown
@@ -15,7 +15,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version of the router-aggregator-ts-core are you running?
+      description: What version of the xplore-core are you running?
       placeholder: ex. 1.0.0
     validations:
       required: true
