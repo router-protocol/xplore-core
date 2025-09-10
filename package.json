@@ -18,12 +18,12 @@
     "lint": "oxlint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "bun run build"
   },
   "keywords": ["sdk", "typescript", "router", "aggregator"],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "bun@1.1.0",
   "devDependencies": {
     "@types/node": "^22.0.0",
     "oxlint": "^0.13.0",
