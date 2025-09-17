@@ -1,20 +1,26 @@
-# @routerprotocol/xplore-core
+# Router Aggregator Core
 
-A high-performance TypeScript SDK for router aggregation with parallel request handling and comprehensive response analysis.
-
+[![Documentation](https://img.shields.io/badge/docs-available-brightgreen)](https://router-protocol.github.io/xplore-core/)
 [![CI](https://github.com/router-protocol/xplore-core/actions/workflows/ci.yml/badge.svg)](https://github.com/router-protocol/xplore-core/actions/workflows/ci.yml)
 [![Release](https://github.com/router-protocol/xplore-core/actions/workflows/release.yml/badge.svg)](https://github.com/router-protocol/xplore-core/actions/workflows/release.yml)
-[![npm version](https://badge.fury.io/js/@routerprotocol%2Fxplore-ui.svg)](https://badge.fury.io/js/@routerprotocol%2Fxplore-ui)
+[![npm version](https://badge.fury.io/js/@routerprotocol%2Fxplore-core.svg)](https://badge.fury.io/js/@routerprotocol%2Fxplore-core)
 
-## ✨ Features
+A TypeScript SDK for router aggregation with comprehensive support for cross-chain bridges and decentralized exchange aggregators.
 
-- 🚀 **Parallel Processing**: Execute requests to multiple router endpoints simultaneously
-- 📊 **Response Analysis**: Built-in utilities for fastest response detection, success rates, and response grouping
-- 🔧 **TypeScript First**: Strict TypeScript with `exactOptionalPropertyTypes` enabled
-- ⚡ **High Performance**: Built with Bun and optimized for speed
-- 🎯 **Flexible**: Generic type support for custom response types
-- 📦 **Dual Output**: CommonJS and ESM support
-- 🧪 **Well Tested**: Comprehensive test coverage with Node.js and Bun runtime testing
+## Overview
+
+Router Aggregator Core provides a unified interface for interacting with multiple routing protocols, categorizing them into two distinct types:
+
+- **Bridges**: Cross-chain protocols that facilitate token transfers between different blockchains
+- **Exchanges**: DEX aggregators that find optimal trading routes within and across chains
+
+## Key Features
+
+- **Type-Safe Node Classification**: Clear distinction between bridge and exchange nodes with TypeScript support
+- **Comprehensive Protocol Support**: Support for 9+ major protocols including Relay, deBridge, Across, OpenOcean, and more
+- **Chain Compatibility**: Built-in compatibility mappings for different blockchain types
+- **Utility Functions**: Rich set of helper functions for node categorization and filtering
+- **Modern TypeScript**: Built with strict TypeScript and modern tooling
 
 ## 📦 Installation
 
@@ -32,32 +38,44 @@ pnpm add @routerprotocol/xplore-core
 bun add @routerprotocol/xplore-core
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```typescript
-import { RouterAggregator } from '@routerprotocol/xplore-core';
+import { BridgeNodes, ExchangeNodes, isBridgeNode, isExchangeNode } from '@routerprotocol/xplore-core'
 
-// Configure your routers
-const routers = [
-  { url: 'https://api-router-1.com/route', timeout: 5000 },
-  { url: 'https://api-router-2.com/route', timeout: 3000 },
-  { url: 'https://api-router-3.com/route', timeout: 4000 }
-];
+// Type-safe node classification
+const relay = BridgeNodes.RELAY
+const openocean = ExchangeNodes.OPENOCEAN
 
-// Create aggregator instance
-const aggregator = new RouterAggregator(routers);
-
-// Execute parallel requests
-const result = await aggregator.execute('/your-endpoint', {
-  method: 'POST',
-  body: { data: 'your-payload' }
-});
-
-// Analyze results
-console.log('Successful responses:', result.successful.length);
-console.log('Failed responses:', result.failed.length);
-console.log('Fastest response time:', result.successful[0]?.timing.duration);
+// Runtime type checking
+console.log(isBridgeNode(relay))         // true
+console.log(isExchangeNode(relay))       // false
+console.log(isExchangeNode(openocean))   // true
 ```
+
+## Supported Protocols
+
+### Bridges
+- **Relay**: Multi-chain bridge supporting EVM, Solana, Sui, and Bitcoin
+- **deBridge**: Cross-chain liquidity protocol
+- **Across**: Optimistic cross-chain bridge
+- **THORChain**: Native cross-chain liquidity protocol supporting Bitcoin
+- **Stargate Taxi**: Cross-chain bridge using LayerZero
+- **Mayan CCTP**: Protocol using Circle's Cross-Chain Transfer Protocol
+- **Mayan Swift**: Fast bridging solution from Mayan
+- **GasZip**: Native token bridge for gas fee optimization
+
+### Exchanges
+- **OpenOcean**: DEX aggregator with cross-chain capabilities
+
+## Documentation
+
+Complete documentation is available at: **https://router-protocol.github.io/xplore-core/**
+
+- [Installation Guide](https://router-protocol.github.io/xplore-core/installation)
+- [Quick Start](https://router-protocol.github.io/xplore-core/quick-start)
+- [API Reference](https://router-protocol.github.io/xplore-core/api/node-types)
+- [Examples](https://router-protocol.github.io/xplore-core/examples/basic-usage)
 
 ## 📚 API Reference
 
@@ -187,41 +205,30 @@ const options = {
 const aggregator = new RouterAggregator(routers, options);
 ```
 
-## 🏗️ Development
-
-### Prerequisites
-
-- [Bun](https://bun.sh/) 1.1.0+
-- Node.js 20+ (for compatibility testing)
-
-### Getting Started
+## Development
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/xplore-core.git
-cd xplore-core
-
 # Install dependencies
 bun install
+
+# Build the package
+bun run build
 
 # Run tests
 bun run test
 
-# Build the project
-bun run build
+# Type checking
+bun run typecheck
 
-# Run development mode
-bun run dev
+# Linting
+bun run lint
+
+# Documentation development
+bun run docs:dev
+
+# Build documentation
+bun run docs:build
 ```
-
-### Scripts
-
-- `bun run build` - Build the SDK
-- `bun run dev` - Build in watch mode
-- `bun run test` - Run tests with vitest
-- `bun run lint` - Run oxlint linter
-- `bun run typecheck` - Run TypeScript type checking
-- `bun run release` - Run semantic release
 
 ## 🧪 Testing
 

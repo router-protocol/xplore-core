@@ -1,0 +1,63 @@
+name: 🔗 Add New Node
+description: Request to add a new bridge or exchange node to Router Aggregator Core
+title: "[Feature]: add [NODE_NAME] support"
+labels: ["enhancement", "node-addition"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to Router Aggregator Core! Please provide detailed information about the node you'd like to add.
+
+  - type: dropdown
+    id: node-type
+    attributes:
+      label: Node Type
+      description: What type of node is this?
+      options:
+        - Bridge (Cross-chain token transfers)
+        - Exchange (DEX aggregator)
+        - Hybrid (Both bridge and exchange capabilities)
+    validations:
+      required: true
+
+  - type: input
+    id: node-name
+    attributes:
+      label: Node Name
+      description: The official name of the protocol/node
+      placeholder: "e.g., Stargate, 1inch, Uniswap"
+    validations:
+      required: true
+
+  - type: input
+    id: enum-value
+    attributes:
+      label: Proposed Enum Value
+      description: Suggested enum identifier (lowercase, snake_case)
+      placeholder: "e.g., stargate_v2, oneinch_fusion, uniswap_x"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: supported-chains
+    attributes:
+      label: Supported Blockchain Networks
+      description: Which chains does this protocol support? (check all that apply)
+      options:
+        - label: EVM
+        - label: Solana
+
+  - type: checkboxes
+    id: integration-requirements
+    attributes:
+      label: Integration Requirements
+      description: What would be needed to integrate this node? (check all that apply)
+      options:
+        - label: Backend API is live
+        - label: Tenderly Simulation Tested
+        - label: Supported by currency API
+        - label: Supported by explorer API
+        - label: Supported by user balances API
+        - label: Special error handling

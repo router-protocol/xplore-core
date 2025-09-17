@@ -3,6 +3,8 @@ import { defineConfig } from 'vocs'
 export default defineConfig({
   title: 'Router Aggregator Core',
   description: 'TypeScript SDK for router aggregation with bridge and exchange support',
+  // GitHub Pages deployment
+  baseUrl: process.env.NODE_ENV === 'production' ? '/xplore-core/' : '/',
   logoUrl: {
     light: '/logo-light.svg',
     dark: '/logo-dark.svg',
@@ -47,14 +49,14 @@ export default defineConfig({
   socials: [
     {
       icon: 'github',
-      link: 'https://github.com/router-protocol/router-aggregator-ts-core',
+      link: 'https://github.com/router-protocol/xplore-core',
     },
   ],
   theme: {
     accentColor: '#007acc',
   },
   editLink: {
-    pattern: 'https://github.com/router-protocol/router-aggregator-ts-core/edit/main/docs/pages/:path',
+    pattern: 'https://github.com/router-protocol/xplore-core/edit/main/docs/pages/:path',
     text: 'Edit on GitHub'
   },
 })
