@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/router-protocol/xplore-core/compare/v1.2.0...v1.3.0) (2025-09-17)
+
+
+### Features
+
+* add viem dependency and introduce unified chain and token type definitions ([902fe07](https://github.com/router-protocol/xplore-core/commit/902fe07fff6e26a99ac3d9fa4982d1c400eea002))
+* add vocs documentation scripts and update package dependencies ([79687c6](https://github.com/router-protocol/xplore-core/commit/79687c673fb154c81240066ed980971c353f6ff9))
+
 # [1.2.0](https://github.com/router-protocol/xplore-core/compare/v1.1.0...v1.2.0) (2025-09-10)
 
 
