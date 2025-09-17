@@ -1,0 +1,53 @@
+# Installation
+
+Install Router Aggregator Core using your preferred package manager.
+
+## Package Managers
+
+:::code-group
+
+```bash [npm]
+npm install @routerprotocol/xplore-core
+```
+
+```bash [yarn]
+yarn add @routerprotocol/xplore-core
+```
+
+```bash [pnpm]
+pnpm add @routerprotocol/xplore-core
+```
+
+```bash [bun]
+bun add @routerprotocol/xplore-core
+```
+
+:::
+
+## TypeScript Support
+
+Router Aggregator Core is built with TypeScript and includes complete type definitions. No additional `@types` packages are required.
+
+## Dependencies
+
+The package has minimal dependencies:
+
+- **viem**: Ethereum library for type-safe blockchain interactions
+
+## Compatibility
+
+- **Node.js**: 18.0.0 or higher
+- **TypeScript**: 5.0.0 or higher
+- **ESM/CommonJS**: Dual package support
+
+## Verify Installation
+
+After installation, verify everything works by importing the package:
+
+```typescript
+import { BridgeNodes, ExchangeNodes, NodeCategory } from '@routerprotocol/xplore-core'
+
+console.log(BridgeNodes.RELAY) // "relay"
+console.log(ExchangeNodes.OPENOCEAN) // "openocean"
+console.log(NodeCategory.BRIDGE) // "bridge"
+```

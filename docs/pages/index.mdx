@@ -1,0 +1,52 @@
+# Router Aggregator Core
+
+A TypeScript SDK for router aggregation with comprehensive support for cross-chain bridges and decentralized exchange aggregators.
+
+## Overview
+
+Router Aggregator Core provides a unified interface for interacting with multiple routing protocols, categorizing them into two distinct types:
+
+- **Bridges**: Cross-chain protocols that facilitate token transfers between different blockchains
+- **Exchanges**: DEX aggregators that find optimal trading routes within and across chains
+
+## Key Features
+
+- **Type-Safe Node Classification**: Clear distinction between bridge and exchange nodes with TypeScript support
+- **Comprehensive Protocol Support**: Support for 9+ major protocols including Relay, deBridge, Across, OpenOcean, and more
+- **Chain Compatibility**: Built-in compatibility mappings for different blockchain types
+- **Utility Functions**: Rich set of helper functions for node categorization and filtering
+- **Modern TypeScript**: Built with strict TypeScript and modern tooling
+
+## Quick Example
+
+```typescript
+import { BridgeNodes, ExchangeNodes, isBridgeNode, isExchangeNode } from '@routerprotocol/xplore-core'
+
+// Type-safe node classification
+const relay = BridgeNodes.RELAY
+const openocean = ExchangeNodes.OPENOCEAN
+
+// Runtime type checking
+console.log(isBridgeNode(relay))     // true
+console.log(isExchangeNode(relay))   // false
+console.log(isExchangeNode(openocean)) // true
+```
+
+## Supported Protocols
+
+### Bridges
+- **Relay**: Multi-chain bridge supporting EVM, Solana, Sui, and Bitcoin
+- **deBridge**: Cross-chain liquidity protocol
+- **Across**: Optimistic cross-chain bridge
+- **THORChain**: Native cross-chain liquidity protocol supporting Bitcoin
+- **Stargate Taxi**: Cross-chain bridge using LayerZero
+- **Mayan CCTP**: Protocol using Circle's Cross-Chain Transfer Protocol
+- **Mayan Swift**: Fast bridging solution from Mayan
+- **GasZip**: Native token bridge for gas fee optimization
+
+### Exchanges
+- **OpenOcean**: DEX aggregator with cross-chain capabilities
+
+## Getting Started
+
+Get started by [installing the package](/installation) and exploring the [quick start guide](/quick-start).

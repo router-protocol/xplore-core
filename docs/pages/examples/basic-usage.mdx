@@ -1,0 +1,389 @@
+# Basic Usage Examples
+
+Learn the fundamentals of working with Router Aggregator Core through practical examples.
+
+## Getting Started
+
+### Basic Imports
+
+```typescript
+import {
+  BridgeNodes,
+  ExchangeNodes,
+  NodeCategory,
+  isBridgeNode,
+  isExchangeNode,
+  getNodeDisplayName,
+  NodeUtils
+} from '@routerprotocol/xplore-core'
+```
+
+### Working with Node Types
+
+```typescript
+// Bridge node example
+const relay = BridgeNodes.RELAY
+console.log(relay) // "relay"
+console.log(getNodeDisplayName(relay)) // "Relay"
+
+// Exchange node example
+const openocean = ExchangeNodes.OPENOCEAN
+console.log(openocean) // "openocean"
+console.log(getNodeDisplayName(openocean)) // "OpenOcean"
+```
+
+## Type Checking and Validation
+
+### Runtime Type Checking
+
+```typescript
+function identifyNodeType(node: AvailableNodes): string {
+  if (isBridgeNode(node)) {
+    return `${getNodeDisplayName(node)} is a bridge protocol`
+  } else if (isExchangeNode(node)) {
+    return `${getNodeDisplayName(node)} is an exchange aggregator`
+  } else {
+    return "Unknown node type"
+  }
+}
+
+// Examples
+console.log(identifyNodeType(BridgeNodes.RELAY))
+// "Relay is a bridge protocol"
+
+console.log(identifyNodeType(ExchangeNodes.OPENOCEAN))
+// "OpenOcean is an exchange aggregator"
+```
+
+### String Validation
+
+```typescript
+function validateAndProcessNode(nodeString: string): string {
+  if (NodeUtils.isValidNode(nodeString)) {
+    // TypeScript now knows nodeString is AvailableNodes
+    const displayName = getNodeDisplayName(nodeString)
+    const category = NodeUtils.getCategory(nodeString)
+    return `Valid node: ${displayName} (${category})`
+  } else {
+    return `Invalid node: ${nodeString}`
+  }
+}
+
+// Examples
+console.log(validateAndProcessNode("relay"))
+// "Valid node: Relay (bridge)"
+
+console.log(validateAndProcessNode("invalid_node"))
+// "Invalid node: invalid_node"
+```
+
+## Working with Collections
+
+### Getting All Nodes by Category
+
+```typescript
+import { getBridgeNodes, getExchangeNodes } from '@routerprotocol/xplore-core'
+
+// Get all bridges
+const allBridges = getBridgeNodes()
+console.log("Available bridges:")
+allBridges.forEach(bridge => {
+  console.log(`- ${getNodeDisplayName(bridge)} (${bridge})`)
+})
+
+// Get all exchanges
+const allExchanges = getExchangeNodes()
+console.log("Available exchanges:")
+allExchanges.forEach(exchange => {
+  console.log(`- ${getNodeDisplayName(exchange)} (${exchange})`)
+})
+
+// Combined list
+const allNodes = [...allBridges, ...allExchanges]
+console.log(`Total nodes: ${allNodes.length}`)
+```
+
+### Node Information Summary
+
+```typescript
+function getNodeSummary() {
+  const bridges = getBridgeNodes()
+  const exchanges = getExchangeNodes()
+
+  return {
+    totalNodes: bridges.length + exchanges.length,
+    bridgeCount: bridges.length,
+    exchangeCount: exchanges.length,
+    bridgeNames: bridges.map(getNodeDisplayName),
+    exchangeNames: exchanges.map(getNodeDisplayName)
+  }
+}
+
+const summary = getNodeSummary()
+console.log(summary)
+/*
+{
+  totalNodes: 9,
+  bridgeCount: 8,
+  exchangeCount: 1,
+  bridgeNames: ["Relay", "deBridge", "Across", ...],
+  exchangeNames: ["OpenOcean"]
+}
+*/
+```
+
+## Practical Applications
+
+### Node Selection Interface
+
+```typescript
+interface NodeOption {
+  value: AvailableNodes
+  label: string
+  category: NodeCategory
+  description: string
+}
+
+function createNodeOptions(): NodeOption[] {
+  const bridges = getBridgeNodes().map(node => ({
+    value: node,
+    label: getNodeDisplayName(node),
+    category: NodeCategory.BRIDGE as NodeCategory,
+    description: `Bridge protocol: ${getNodeDisplayName(node)}`
+  }))
+
+  const exchanges = getExchangeNodes().map(node => ({
+    value: node,
+    label: getNodeDisplayName(node),
+    category: NodeCategory.EXCHANGE as NodeCategory,
+    description: `Exchange aggregator: ${getNodeDisplayName(node)}`
+  }))
+
+  return [...bridges, ...exchanges]
+}
+
+// Usage in a UI component
+const nodeOptions = createNodeOptions()
+nodeOptions.forEach(option => {
+  console.log(`${option.label} - ${option.description}`)
+})
+```
+
+### Configuration Builder
+
+```typescript
+interface RouteConfig {
+  sourceChain: string
+  targetChain: string
+  preferredNodes: AvailableNodes[]
+  operationType: 'bridge' | 'swap'
+}
+
+function buildRouteConfig(
+  sourceChain: string,
+  targetChain: string,
+  operationType: 'bridge' | 'swap'
+): RouteConfig {
+  let preferredNodes: AvailableNodes[]
+
+  if (operationType === 'bridge') {
+    preferredNodes = getBridgeNodes()
+  } else {
+    preferredNodes = getExchangeNodes()
+  }
+
+  return {
+    sourceChain,
+    targetChain,
+    preferredNodes,
+    operationType
+  }
+}
+
+// Examples
+const bridgeConfig = buildRouteConfig('ethereum', 'polygon', 'bridge')
+const swapConfig = buildRouteConfig('ethereum', 'ethereum', 'swap')
+
+console.log(`Bridge config has ${bridgeConfig.preferredNodes.length} options`)
+console.log(`Swap config has ${swapConfig.preferredNodes.length} options`)
+```
+
+### Node Comparison
+
+```typescript
+function compareNodes(node1: AvailableNodes, node2: AvailableNodes) {
+  return {
+    node1: {
+      id: node1,
+      name: getNodeDisplayName(node1),
+      category: NodeUtils.getCategory(node1),
+      isBridge: isBridgeNode(node1)
+    },
+    node2: {
+      id: node2,
+      name: getNodeDisplayName(node2),
+      category: NodeUtils.getCategory(node2),
+      isBridge: isBridgeNode(node2)
+    },
+    sameCategory: NodeUtils.getCategory(node1) === NodeUtils.getCategory(node2),
+    equal: NodeUtils.areEqual(node1, node2)
+  }
+}
+
+// Compare bridge nodes
+const comparison1 = compareNodes(BridgeNodes.RELAY, BridgeNodes.DEBRIDGE)
+console.log(comparison1.sameCategory) // true (both bridges)
+console.log(comparison1.equal) // false (different nodes)
+
+// Compare across categories
+const comparison2 = compareNodes(BridgeNodes.RELAY, ExchangeNodes.OPENOCEAN)
+console.log(comparison2.sameCategory) // false (bridge vs exchange)
+```
+
+## Error Handling
+
+### Safe Node Processing
+
+```typescript
+function safelyProcessNode(input: unknown): string {
+  try {
+    // Type checking
+    if (typeof input !== 'string') {
+      throw new Error('Input must be a string')
+    }
+
+    // Validation
+    if (!NodeUtils.isValidNode(input)) {
+      throw new Error(`"${input}" is not a valid node identifier`)
+    }
+
+    // Processing
+    const displayName = getNodeDisplayName(input)
+    const category = NodeUtils.getCategory(input)
+
+    return `Successfully processed ${displayName} (${category})`
+  } catch (error) {
+    return `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+  }
+}
+
+// Examples
+console.log(safelyProcessNode("relay"))
+// "Successfully processed Relay (bridge)"
+
+console.log(safelyProcessNode("invalid"))
+// "Error: "invalid" is not a valid node identifier"
+
+console.log(safelyProcessNode(123))
+// "Error: Input must be a string"
+```
+
+### Graceful Fallbacks
+
+```typescript
+function getNodeInfoWithFallback(nodeInput: string) {
+  if (NodeUtils.isValidNode(nodeInput)) {
+    return {
+      success: true,
+      node: nodeInput,
+      displayName: getNodeDisplayName(nodeInput),
+      category: NodeUtils.getCategory(nodeInput),
+      isBridge: isBridgeNode(nodeInput),
+      isExchange: isExchangeNode(nodeInput)
+    }
+  } else {
+    return {
+      success: false,
+      error: `Unknown node: ${nodeInput}`,
+      availableNodes: NodeUtils.getAllNodes(),
+      suggestions: NodeUtils.getAllNodes()
+        .filter(node => node.includes(nodeInput.toLowerCase()))
+    }
+  }
+}
+
+// Examples
+const validResult = getNodeInfoWithFallback("relay")
+console.log(validResult.success) // true
+
+const invalidResult = getNodeInfoWithFallback("rela")
+console.log(invalidResult.success) // false
+console.log(invalidResult.suggestions) // ["relay"] (partial match)
+```
+
+## Integration Patterns
+
+### Factory Pattern
+
+```typescript
+class NodeProcessor {
+  static create(node: AvailableNodes) {
+    if (isBridgeNode(node)) {
+      return new BridgeProcessor(node)
+    } else if (isExchangeNode(node)) {
+      return new ExchangeProcessor(node)
+    } else {
+      throw new Error(`Unsupported node type: ${node}`)
+    }
+  }
+}
+
+class BridgeProcessor {
+  constructor(private bridge: BridgeNodes) {}
+
+  process() {
+    return `Processing bridge: ${getNodeDisplayName(this.bridge)}`
+  }
+}
+
+class ExchangeProcessor {
+  constructor(private exchange: ExchangeNodes) {}
+
+  process() {
+    return `Processing exchange: ${getNodeDisplayName(this.exchange)}`
+  }
+}
+
+// Usage
+const relayProcessor = NodeProcessor.create(BridgeNodes.RELAY)
+const openoceanProcessor = NodeProcessor.create(ExchangeNodes.OPENOCEAN)
+
+console.log(relayProcessor.process())
+console.log(openoceanProcessor.process())
+```
+
+### Strategy Pattern
+
+```typescript
+interface NodeStrategy {
+  execute(params: any): string
+}
+
+class BridgeStrategy implements NodeStrategy {
+  constructor(private node: BridgeNodes) {}
+
+  execute(params: any): string {
+    return `Executing bridge strategy for ${getNodeDisplayName(this.node)}`
+  }
+}
+
+class ExchangeStrategy implements NodeStrategy {
+  constructor(private node: ExchangeNodes) {}
+
+  execute(params: any): string {
+    return `Executing exchange strategy for ${getNodeDisplayName(this.node)}`
+  }
+}
+
+function createStrategy(node: AvailableNodes): NodeStrategy {
+  if (isBridgeNode(node)) {
+    return new BridgeStrategy(node)
+  } else {
+    return new ExchangeStrategy(node)
+  }
+}
+
+// Usage
+const strategy = createStrategy(BridgeNodes.ACROSS)
+console.log(strategy.execute({}))
+```

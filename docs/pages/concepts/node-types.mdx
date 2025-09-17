@@ -1,0 +1,205 @@
+# Node Types
+
+Understanding the node type system in Router Aggregator Core.
+
+## Overview
+
+Router Aggregator Core categorizes routing protocols into distinct node types, providing type safety and clear separation of concerns. The type system is built around two main categories:
+
+- **Bridge Nodes**: Cross-chain bridges for token transfers
+- **Exchange Nodes**: DEX aggregators for optimal trading routes
+
+## Type Hierarchy
+
+```typescript
+// Base category enumeration
+enum NodeCategory {
+  BRIDGE = "bridge",
+  EXCHANGE = "exchange"
+}
+
+// Bridge-specific nodes
+enum BridgeNodes {
+  RELAY = "relay",
+  DEBRIDGE = "debridge",
+  ACROSS = "across",
+  THORCHAIN = "thorchain",
+  STARGATE_TAXI = "stargate_taxi",
+  MAYAN_FMCTP = "mayan_fmctp",
+  MAYAN_SWIFT = "mayan_swift",
+  GASZIP_NATIVE = "gaszip_native"
+}
+
+// Exchange-specific nodes
+enum ExchangeNodes {
+  OPENOCEAN = "openocean"
+}
+
+// Union type for all nodes
+type AvailableNodes = BridgeNodes | ExchangeNodes
+```
+
+## Benefits of This Structure
+
+### Type Safety
+
+The hierarchical structure provides compile-time type checking:
+
+```typescript
+// Type-safe function parameters
+function bridgeTokens(bridge: BridgeNodes, amount: bigint) {
+  // Only bridge nodes accepted
+}
+
+function swapTokens(exchange: ExchangeNodes, params: SwapParams) {
+  // Only exchange nodes accepted
+}
+
+// Union type for flexible functions
+function getNodeInfo(node: AvailableNodes) {
+  // Accepts any valid node
+}
+```
+
+### Runtime Type Guards
+
+Built-in type guards enable runtime type checking with type narrowing:
+
+```typescript
+function processNode(node: AvailableNodes) {
+  if (isBridgeNode(node)) {
+    // TypeScript knows node is BridgeNodes here
+    console.log(`Processing bridge: ${node}`)
+    // Bridge-specific logic
+  } else if (isExchangeNode(node)) {
+    // TypeScript knows node is ExchangeNodes here
+    console.log(`Processing exchange: ${node}`)
+    // Exchange-specific logic
+  }
+}
+```
+
+### Extensibility
+
+Adding new nodes is straightforward:
+
+```typescript
+// Adding a new bridge
+enum BridgeNodes {
+  // ... existing bridges
+  NEW_BRIDGE = "new_bridge"
+}
+
+// Adding a new exchange
+enum ExchangeNodes {
+  // ... existing exchanges
+  NEW_EXCHANGE = "new_exchange"
+}
+```
+
+## Node Categories
+
+### Bridge Nodes
+
+Bridge nodes facilitate cross-chain token transfers:
+
+| Node | Description | Supported Chains |
+|------|-------------|------------------|
+| `RELAY` | Multi-chain bridge | EVM, Solana, Sui, Bitcoin |
+| `DEBRIDGE` | Cross-chain liquidity protocol | Multiple EVMs |
+| `ACROSS` | Optimistic cross-chain bridge | EVM chains |
+| `THORCHAIN` | Native cross-chain protocol | Bitcoin, EVM |
+| `STARGATE_TAXI` | LayerZero-based bridge | EVM chains |
+| `MAYAN_FMCTP` | Circle's CCTP protocol | EVM chains |
+| `MAYAN_SWIFT` | Fast bridging solution | Multiple chains |
+| `GASZIP_NATIVE` | Gas optimization bridge | EVM chains |
+
+### Exchange Nodes
+
+Exchange nodes provide DEX aggregation services:
+
+| Node | Description | Capabilities |
+|------|-------------|--------------|
+| `OPENOCEAN` | DEX aggregator | Cross-chain routing, optimal pricing |
+
+## Type Utilities
+
+### Category Checking
+
+```typescript
+import { getNodeCategory, NODE_CATEGORIES } from '@routerprotocol/xplore-core'
+
+// Get category programmatically
+const category = getNodeCategory(BridgeNodes.RELAY) // NodeCategory.BRIDGE
+
+// Direct lookup
+const isExchange = NODE_CATEGORIES[ExchangeNodes.OPENOCEAN] === NodeCategory.EXCHANGE
+```
+
+### Node Filtering
+
+```typescript
+import { getBridgeNodes, getExchangeNodes } from '@routerprotocol/xplore-core'
+
+// Get all nodes by category
+const bridges = getBridgeNodes()
+const exchanges = getExchangeNodes()
+
+// Filter available nodes
+const allNodes = [...bridges, ...exchanges]
+```
+
+### Validation
+
+```typescript
+import { NodeUtils } from '@routerprotocol/xplore-core'
+
+// Validate node strings
+const isValid = NodeUtils.isValidNode("relay") // true
+const isInvalid = NodeUtils.isValidNode("unknown") // false
+
+// Type-safe validation
+function validateAndProcess(nodeString: string) {
+  if (NodeUtils.isValidNode(nodeString)) {
+    // nodeString is now typed as AvailableNodes
+    return getNodeDisplayName(nodeString)
+  }
+  throw new Error(`Invalid node: ${nodeString}`)
+}
+```
+
+## Best Practices
+
+### Use Specific Types When Possible
+
+```typescript
+// Good: Specific type when you know the category
+function configureBridge(bridge: BridgeNodes) { }
+function configureExchange(exchange: ExchangeNodes) { }
+
+// Acceptable: Union type when category varies
+function getNodeStatus(node: AvailableNodes) { }
+```
+
+### Leverage Type Guards
+
+```typescript
+// Good: Use type guards for runtime checks
+function routeTransaction(node: AvailableNodes, params: any) {
+  if (isBridgeNode(node)) {
+    return handleBridgeTransaction(node, params)
+  } else {
+    return handleExchangeTransaction(node, params)
+  }
+}
+```
+
+### Import What You Need
+
+```typescript
+// Good: Import specific enums
+import { BridgeNodes, ExchangeNodes } from '@routerprotocol/xplore-core'
+
+// Avoid: Importing everything
+import * as RouterCore from '@routerprotocol/xplore-core'
+```

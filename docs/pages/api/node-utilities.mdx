@@ -1,0 +1,452 @@
+# Node Utilities API Reference
+
+Complete API reference for node utility functions and the NodeUtils object.
+
+## Utility Functions
+
+### `getNodeDisplayName()`
+
+Get the human-readable display name for a routing node.
+
+```typescript
+function getNodeDisplayName(node: AvailableNodes): string
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to get the display name for
+
+**Returns:**
+- `string` - The display name string, falls back to capitalized node name if not found
+
+**Example:**
+```typescript
+import { getNodeDisplayName, BridgeNodes } from '@routerprotocol/xplore-core'
+
+const name = getNodeDisplayName(BridgeNodes.RELAY)
+console.log(name) // "Relay"
+
+const exchangeName = getNodeDisplayName(ExchangeNodes.OPENOCEAN)
+console.log(exchangeName) // "OpenOcean"
+```
+
+---
+
+### `isBridgeNode()`
+
+Check if a node is a bridge with type narrowing.
+
+```typescript
+function isBridgeNode(node: AvailableNodes): node is BridgeNodes
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to check
+
+**Returns:**
+- `boolean` - `true` if the node is a bridge, `false` otherwise
+- **Type Guard**: Narrows the type to `BridgeNodes` when `true`
+
+**Example:**
+```typescript
+import { isBridgeNode, BridgeNodes, ExchangeNodes } from '@routerprotocol/xplore-core'
+
+console.log(isBridgeNode(BridgeNodes.RELAY)) // true
+console.log(isBridgeNode(ExchangeNodes.OPENOCEAN)) // false
+
+// Type narrowing
+function processNode(node: AvailableNodes) {
+  if (isBridgeNode(node)) {
+    // node is now typed as BridgeNodes
+    console.log(`Processing bridge: ${node}`)
+  }
+}
+```
+
+---
+
+### `isExchangeNode()`
+
+Check if a node is an exchange/DEX aggregator with type narrowing.
+
+```typescript
+function isExchangeNode(node: AvailableNodes): node is ExchangeNodes
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to check
+
+**Returns:**
+- `boolean` - `true` if the node is an exchange, `false` otherwise
+- **Type Guard**: Narrows the type to `ExchangeNodes` when `true`
+
+**Example:**
+```typescript
+import { isExchangeNode, ExchangeNodes, BridgeNodes } from '@routerprotocol/xplore-core'
+
+console.log(isExchangeNode(ExchangeNodes.OPENOCEAN)) // true
+console.log(isExchangeNode(BridgeNodes.RELAY)) // false
+
+// Type narrowing
+function processNode(node: AvailableNodes) {
+  if (isExchangeNode(node)) {
+    // node is now typed as ExchangeNodes
+    console.log(`Processing exchange: ${node}`)
+  }
+}
+```
+
+---
+
+### `getBridgeNodes()`
+
+Get all bridge node enum values.
+
+```typescript
+function getBridgeNodes(): BridgeNodes[]
+```
+
+**Returns:**
+- `BridgeNodes[]` - Array of all bridge node enum values
+
+**Example:**
+```typescript
+import { getBridgeNodes } from '@routerprotocol/xplore-core'
+
+const bridges = getBridgeNodes()
+console.log(bridges)
+// ["relay", "debridge", "across", "thorchain", "stargate_taxi", "mayan_fmctp", "mayan_swift", "gaszip_native"]
+
+// Use with other functions
+bridges.forEach(bridge => {
+  console.log(`Bridge: ${getNodeDisplayName(bridge)}`)
+})
+```
+
+---
+
+### `getExchangeNodes()`
+
+Get all exchange node enum values.
+
+```typescript
+function getExchangeNodes(): ExchangeNodes[]
+```
+
+**Returns:**
+- `ExchangeNodes[]` - Array of all exchange node enum values
+
+**Example:**
+```typescript
+import { getExchangeNodes } from '@routerprotocol/xplore-core'
+
+const exchanges = getExchangeNodes()
+console.log(exchanges) // ["openocean"]
+
+// Combined with bridges
+const allNodes = [...getBridgeNodes(), ...getExchangeNodes()]
+```
+
+---
+
+### `getNodeCategory()`
+
+Get the category of a node.
+
+```typescript
+function getNodeCategory(node: AvailableNodes): NodeCategory
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to categorize
+
+**Returns:**
+- `NodeCategory` - The node's category (`BRIDGE` or `EXCHANGE`)
+
+**Example:**
+```typescript
+import { getNodeCategory, BridgeNodes, ExchangeNodes, NodeCategory } from '@routerprotocol/xplore-core'
+
+const bridgeCategory = getNodeCategory(BridgeNodes.RELAY)
+console.log(bridgeCategory) // NodeCategory.BRIDGE ("bridge")
+
+const exchangeCategory = getNodeCategory(ExchangeNodes.OPENOCEAN)
+console.log(exchangeCategory) // NodeCategory.EXCHANGE ("exchange")
+
+// Switch on category
+function handleByCategory(node: AvailableNodes) {
+  switch (getNodeCategory(node)) {
+    case NodeCategory.BRIDGE:
+      return "Handle bridge operation"
+    case NodeCategory.EXCHANGE:
+      return "Handle exchange operation"
+  }
+}
+```
+
+---
+
+## NodeUtils Object
+
+The `NodeUtils` object provides a collection of utility methods for working with nodes.
+
+```typescript
+const NodeUtils: {
+  getDisplayName: typeof getNodeDisplayName;
+  isBridge: typeof isBridgeNode;
+  isExchange: typeof isExchangeNode;
+  getCategory: typeof getNodeCategory;
+  getBridges: typeof getBridgeNodes;
+  getExchanges: typeof getExchangeNodes;
+  getAllNodes(): AvailableNodes[];
+  isValidNode(value: string): value is AvailableNodes;
+  toLowerCase(node: AvailableNodes): string;
+  areEqual(node1: AvailableNodes, node2: AvailableNodes): boolean;
+}
+```
+
+### `NodeUtils.getDisplayName()`
+
+Alias for `getNodeDisplayName()`.
+
+```typescript
+NodeUtils.getDisplayName(node: AvailableNodes): string
+```
+
+### `NodeUtils.isBridge()`
+
+Alias for `isBridgeNode()`.
+
+```typescript
+NodeUtils.isBridge(node: AvailableNodes): node is BridgeNodes
+```
+
+### `NodeUtils.isExchange()`
+
+Alias for `isExchangeNode()`.
+
+```typescript
+NodeUtils.isExchange(node: AvailableNodes): node is ExchangeNodes
+```
+
+### `NodeUtils.getCategory()`
+
+Alias for `getNodeCategory()`.
+
+```typescript
+NodeUtils.getCategory(node: AvailableNodes): NodeCategory
+```
+
+### `NodeUtils.getBridges()`
+
+Alias for `getBridgeNodes()`.
+
+```typescript
+NodeUtils.getBridges(): BridgeNodes[]
+```
+
+### `NodeUtils.getExchanges()`
+
+Alias for `getExchangeNodes()`.
+
+```typescript
+NodeUtils.getExchanges(): ExchangeNodes[]
+```
+
+### `NodeUtils.getAllNodes()`
+
+Get all available nodes as an array.
+
+```typescript
+NodeUtils.getAllNodes(): AvailableNodes[]
+```
+
+**Returns:**
+- `AvailableNodes[]` - Array containing all bridge and exchange nodes
+
+**Example:**
+```typescript
+import { NodeUtils } from '@routerprotocol/xplore-core'
+
+const allNodes = NodeUtils.getAllNodes()
+console.log(allNodes)
+// ["relay", "debridge", "across", ..., "openocean"]
+
+// Equivalent to:
+const manual = [...getBridgeNodes(), ...getExchangeNodes()]
+```
+
+### `NodeUtils.isValidNode()`
+
+Check if a string is a valid node identifier.
+
+```typescript
+NodeUtils.isValidNode(value: string): value is AvailableNodes
+```
+
+**Parameters:**
+- `value`: `string` - The string to validate
+
+**Returns:**
+- `boolean` - `true` if the string is a valid node identifier
+- **Type Guard**: Narrows the type to `AvailableNodes` when `true`
+
+**Example:**
+```typescript
+import { NodeUtils } from '@routerprotocol/xplore-core'
+
+console.log(NodeUtils.isValidNode("relay")) // true
+console.log(NodeUtils.isValidNode("openocean")) // true
+console.log(NodeUtils.isValidNode("invalid")) // false
+
+// Type narrowing
+function processNodeString(nodeStr: string) {
+  if (NodeUtils.isValidNode(nodeStr)) {
+    // nodeStr is now typed as AvailableNodes
+    return NodeUtils.getDisplayName(nodeStr)
+  }
+  throw new Error(`Invalid node: ${nodeStr}`)
+}
+```
+
+### `NodeUtils.toLowerCase()`
+
+Convert node to lowercase string.
+
+```typescript
+NodeUtils.toLowerCase(node: AvailableNodes): string
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to convert
+
+**Returns:**
+- `string` - Lowercase string representation of the node
+
+**Example:**
+```typescript
+import { NodeUtils, BridgeNodes } from '@routerprotocol/xplore-core'
+
+const lower = NodeUtils.toLowerCase(BridgeNodes.STARGATE_TAXI)
+console.log(lower) // "stargate_taxi"
+```
+
+### `NodeUtils.areEqual()`
+
+Compare two nodes for equality.
+
+```typescript
+NodeUtils.areEqual(node1: AvailableNodes, node2: AvailableNodes): boolean
+```
+
+**Parameters:**
+- `node1`: `AvailableNodes` - First node to compare
+- `node2`: `AvailableNodes` - Second node to compare
+
+**Returns:**
+- `boolean` - `true` if the nodes are equal, `false` otherwise
+
+**Example:**
+```typescript
+import { NodeUtils, BridgeNodes } from '@routerprotocol/xplore-core'
+
+const isEqual = NodeUtils.areEqual(BridgeNodes.RELAY, BridgeNodes.RELAY)
+console.log(isEqual) // true
+
+const isDifferent = NodeUtils.areEqual(BridgeNodes.RELAY, BridgeNodes.DEBRIDGE)
+console.log(isDifferent) // false
+```
+
+---
+
+## Advanced Usage Examples
+
+### Node Processing Pipeline
+
+```typescript
+import { NodeUtils, AvailableNodes } from '@routerprotocol/xplore-core'
+
+function processNodePipeline(nodeStr: string) {
+  // Validate input
+  if (!NodeUtils.isValidNode(nodeStr)) {
+    throw new Error(`Invalid node: ${nodeStr}`)
+  }
+
+  // Get node information
+  const displayName = NodeUtils.getDisplayName(nodeStr)
+  const category = NodeUtils.getCategory(nodeStr)
+  const isBridge = NodeUtils.isBridge(nodeStr)
+
+  // Process based on type
+  if (isBridge) {
+    return processBridge(nodeStr, displayName)
+  } else {
+    return processExchange(nodeStr, displayName)
+  }
+}
+```
+
+### Node Filtering and Grouping
+
+```typescript
+function categorizeNodes(): {
+  bridges: BridgeNodes[];
+  exchanges: ExchangeNodes[];
+  all: AvailableNodes[];
+} {
+  return {
+    bridges: NodeUtils.getBridges(),
+    exchanges: NodeUtils.getExchanges(),
+    all: NodeUtils.getAllNodes()
+  }
+}
+
+function filterCompatibleNodes(
+  chainType: string,
+  category?: NodeCategory
+): AvailableNodes[] {
+  let nodes = NodeUtils.getAllNodes()
+
+  // Filter by chain compatibility
+  const compatibleNodes = CHAIN_NODE_COMPATIBILITY[chainType] ||
+                          CHAIN_NODE_COMPATIBILITY.default
+  nodes = nodes.filter(node => compatibleNodes.includes(node))
+
+  // Filter by category if specified
+  if (category) {
+    nodes = nodes.filter(node => NodeUtils.getCategory(node) === category)
+  }
+
+  return nodes
+}
+```
+
+### Comprehensive Node Information
+
+```typescript
+interface NodeInfo {
+  id: AvailableNodes;
+  displayName: string;
+  category: NodeCategory;
+  isBridge: boolean;
+  isExchange: boolean;
+  supportedChains: string[];
+}
+
+function getCompleteNodeInfo(node: AvailableNodes): NodeInfo {
+  return {
+    id: node,
+    displayName: NodeUtils.getDisplayName(node),
+    category: NodeUtils.getCategory(node),
+    isBridge: NodeUtils.isBridge(node),
+    isExchange: NodeUtils.isExchange(node),
+    supportedChains: Object.entries(CHAIN_NODE_COMPATIBILITY)
+      .filter(([chain, nodes]) => nodes.includes(node))
+      .map(([chain]) => chain)
+  }
+}
+
+// Get information for all nodes
+function getAllNodeInfo(): NodeInfo[] {
+  return NodeUtils.getAllNodes().map(getCompleteNodeInfo)
+}
+```

@@ -1,0 +1,284 @@
+# Node Types API Reference
+
+Complete API reference for node type definitions.
+
+## Enums
+
+### `NodeCategory`
+
+Base enumeration for node categories.
+
+```typescript
+enum NodeCategory {
+  BRIDGE = "bridge",
+  EXCHANGE = "exchange"
+}
+```
+
+**Values:**
+- `BRIDGE`: Represents cross-chain bridge protocols
+- `EXCHANGE`: Represents DEX aggregator protocols
+
+---
+
+### `BridgeNodes`
+
+Enumeration of all supported bridge protocols.
+
+```typescript
+enum BridgeNodes {
+  RELAY = "relay",
+  DEBRIDGE = "debridge",
+  ACROSS = "across",
+  THORCHAIN = "thorchain",
+  STARGATE_TAXI = "stargate_taxi",
+  MAYAN_FMCTP = "mayan_fmctp",
+  MAYAN_SWIFT = "mayan_swift",
+  GASZIP_NATIVE = "gaszip_native"
+}
+```
+
+**Values:**
+
+| Value | String Value | Description |
+|-------|--------------|-------------|
+| `RELAY` | `"relay"` | Multi-chain bridge supporting EVM, Solana, Sui, and Bitcoin |
+| `DEBRIDGE` | `"debridge"` | Cross-chain liquidity protocol |
+| `ACROSS` | `"across"` | Optimistic cross-chain bridge |
+| `THORCHAIN` | `"thorchain"` | Native cross-chain liquidity protocol supporting Bitcoin |
+| `STARGATE_TAXI` | `"stargate_taxi"` | Cross-chain bridge using LayerZero |
+| `MAYAN_FMCTP` | `"mayan_fmctp"` | Mayan protocol using Circle's Cross-Chain Transfer Protocol |
+| `MAYAN_SWIFT` | `"mayan_swift"` | Fast bridging solution from Mayan |
+| `GASZIP_NATIVE` | `"gaszip_native"` | Native token bridge for gas fee optimization |
+
+---
+
+### `ExchangeNodes`
+
+Enumeration of all supported exchange/DEX aggregator protocols.
+
+```typescript
+enum ExchangeNodes {
+  OPENOCEAN = "openocean"
+}
+```
+
+**Values:**
+
+| Value | String Value | Description |
+|-------|--------------|-------------|
+| `OPENOCEAN` | `"openocean"` | DEX aggregator with cross-chain capabilities |
+
+---
+
+## Types
+
+### `AvailableNodes`
+
+Union type representing all available nodes.
+
+```typescript
+type AvailableNodes = BridgeNodes | ExchangeNodes
+```
+
+**Description:**
+Union type that combines both bridge and exchange node enums. Use this type when you need to accept any valid node type.
+
+**Usage:**
+```typescript
+function processNode(node: AvailableNodes) {
+  // Can accept any bridge or exchange node
+}
+```
+
+---
+
+## Type Guards
+
+### `isBridgeNode()`
+
+Checks if a node is a bridge node with type narrowing.
+
+```typescript
+function isBridgeNode(node: AvailableNodes): node is BridgeNodes
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to check
+
+**Returns:**
+- `boolean` - `true` if the node is a bridge, `false` otherwise
+- **Type Guard**: Narrows the type to `BridgeNodes` when `true`
+
+**Example:**
+```typescript
+const node: AvailableNodes = BridgeNodes.RELAY
+
+if (isBridgeNode(node)) {
+  // TypeScript knows node is BridgeNodes here
+  console.log(`Processing bridge: ${node}`)
+}
+```
+
+---
+
+### `isExchangeNode()`
+
+Checks if a node is an exchange node with type narrowing.
+
+```typescript
+function isExchangeNode(node: AvailableNodes): node is ExchangeNodes
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to check
+
+**Returns:**
+- `boolean` - `true` if the node is an exchange, `false` otherwise
+- **Type Guard**: Narrows the type to `ExchangeNodes` when `true`
+
+**Example:**
+```typescript
+const node: AvailableNodes = ExchangeNodes.OPENOCEAN
+
+if (isExchangeNode(node)) {
+  // TypeScript knows node is ExchangeNodes here
+  console.log(`Processing exchange: ${node}`)
+}
+```
+
+---
+
+## Utility Functions
+
+### `getBridgeNodes()`
+
+Returns all bridge node enum values.
+
+```typescript
+function getBridgeNodes(): BridgeNodes[]
+```
+
+**Returns:**
+- `BridgeNodes[]` - Array of all bridge node enum values
+
+**Example:**
+```typescript
+const bridges = getBridgeNodes()
+console.log(bridges)
+// ["relay", "debridge", "across", "thorchain", "stargate_taxi", "mayan_fmctp", "mayan_swift", "gaszip_native"]
+```
+
+---
+
+### `getExchangeNodes()`
+
+Returns all exchange node enum values.
+
+```typescript
+function getExchangeNodes(): ExchangeNodes[]
+```
+
+**Returns:**
+- `ExchangeNodes[]` - Array of all exchange node enum values
+
+**Example:**
+```typescript
+const exchanges = getExchangeNodes()
+console.log(exchanges) // ["openocean"]
+```
+
+---
+
+### `getNodeCategory()`
+
+Gets the category of a node.
+
+```typescript
+function getNodeCategory(node: AvailableNodes): NodeCategory
+```
+
+**Parameters:**
+- `node`: `AvailableNodes` - The node to categorize
+
+**Returns:**
+- `NodeCategory` - The node's category (`BRIDGE` or `EXCHANGE`)
+
+**Example:**
+```typescript
+const category = getNodeCategory(BridgeNodes.RELAY)
+console.log(category) // NodeCategory.BRIDGE
+
+const exchangeCategory = getNodeCategory(ExchangeNodes.OPENOCEAN)
+console.log(exchangeCategory) // NodeCategory.EXCHANGE
+```
+
+---
+
+## Advanced Usage
+
+### Pattern Matching
+
+```typescript
+function handleNode(node: AvailableNodes) {
+  switch (getNodeCategory(node)) {
+    case NodeCategory.BRIDGE:
+      return handleBridge(node as BridgeNodes)
+    case NodeCategory.EXCHANGE:
+      return handleExchange(node as ExchangeNodes)
+    default:
+      throw new Error(`Unknown node category for ${node}`)
+  }
+}
+```
+
+### Type-Safe Filtering
+
+```typescript
+function filterNodesByType<T extends AvailableNodes>(
+  nodes: AvailableNodes[],
+  predicate: (node: AvailableNodes) => node is T
+): T[] {
+  return nodes.filter(predicate)
+}
+
+// Usage
+const allNodes: AvailableNodes[] = [...getBridgeNodes(), ...getExchangeNodes()]
+const bridges = filterNodesByType(allNodes, isBridgeNode)
+const exchanges = filterNodesByType(allNodes, isExchangeNode)
+```
+
+### Exhaustive Type Checking
+
+```typescript
+function processNodeExhaustive(node: AvailableNodes): string {
+  if (isBridgeNode(node)) {
+    // Handle all bridge cases
+    switch (node) {
+      case BridgeNodes.RELAY:
+        return "Processing Relay bridge"
+      case BridgeNodes.DEBRIDGE:
+        return "Processing deBridge"
+      // ... handle all bridge cases
+      default:
+        // TypeScript will error if any bridge case is missing
+        const exhaustiveCheck: never = node
+        throw new Error(`Unhandled bridge node: ${exhaustiveCheck}`)
+    }
+  } else if (isExchangeNode(node)) {
+    // Handle all exchange cases
+    switch (node) {
+      case ExchangeNodes.OPENOCEAN:
+        return "Processing OpenOcean exchange"
+      default:
+        // TypeScript will error if any exchange case is missing
+        const exhaustiveCheck: never = node
+        throw new Error(`Unhandled exchange node: ${exhaustiveCheck}`)
+    }
+  } else {
+    // This should never be reached
+    const exhaustiveCheck: never = node
+    throw new Error(`Unknown node type: ${exhaustiveCheck}`)
+  }
+}
+```

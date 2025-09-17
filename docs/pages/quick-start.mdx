@@ -1,0 +1,137 @@
+# Quick Start
+
+Get up and running with Router Aggregator Core in minutes.
+
+## Basic Import
+
+Start by importing the types and utilities you need:
+
+```typescript
+import {
+  BridgeNodes,
+  ExchangeNodes,
+  NodeCategory,
+  isBridgeNode,
+  isExchangeNode,
+  getBridgeNodes,
+  getExchangeNodes,
+  NodeUtils
+} from '@routerprotocol/xplore-core'
+```
+
+## Working with Node Types
+
+### Bridge Nodes
+
+```typescript
+// Access specific bridge nodes
+const relay = BridgeNodes.RELAY
+const debridge = BridgeNodes.DEBRIDGE
+const across = BridgeNodes.ACROSS
+
+// Get all bridge nodes
+const allBridges = getBridgeNodes()
+console.log(allBridges) // ["relay", "debridge", "across", ...]
+
+// Check if a node is a bridge
+console.log(isBridgeNode(relay)) // true
+```
+
+### Exchange Nodes
+
+```typescript
+// Access exchange nodes
+const openocean = ExchangeNodes.OPENOCEAN
+
+// Get all exchange nodes
+const allExchanges = getExchangeNodes()
+console.log(allExchanges) // ["openocean"]
+
+// Check if a node is an exchange
+console.log(isExchangeNode(openocean)) // true
+```
+
+## Node Categorization
+
+```typescript
+import { getNodeCategory, NODE_CATEGORIES } from '@routerprotocol/xplore-core'
+
+// Get category of any node
+console.log(getNodeCategory(BridgeNodes.RELAY)) // NodeCategory.BRIDGE
+console.log(getNodeCategory(ExchangeNodes.OPENOCEAN)) // NodeCategory.EXCHANGE
+
+// Direct category lookup
+console.log(NODE_CATEGORIES[BridgeNodes.THORCHAIN]) // "bridge"
+```
+
+## Display Names
+
+```typescript
+import { NodeDisplayNames, getNodeDisplayName } from '@routerprotocol/xplore-core'
+
+// Get human-readable names
+console.log(getNodeDisplayName(BridgeNodes.RELAY)) // "Relay"
+console.log(getNodeDisplayName(ExchangeNodes.OPENOCEAN)) // "OpenOcean"
+
+// Direct lookup
+console.log(NodeDisplayNames[BridgeNodes.STARGATE_TAXI]) // "Stargate Taxi"
+```
+
+## Utility Functions
+
+```typescript
+// Using the NodeUtils object
+const displayName = NodeUtils.getDisplayName(BridgeNodes.RELAY)
+const isValid = NodeUtils.isValidNode("relay")
+const category = NodeUtils.getCategory(BridgeNodes.RELAY)
+
+// Get filtered lists
+const bridges = NodeUtils.getBridges()
+const exchanges = NodeUtils.getExchanges()
+const allNodes = NodeUtils.getAllNodes()
+```
+
+## Chain Compatibility
+
+```typescript
+import { CHAIN_NODE_COMPATIBILITY } from '@routerprotocol/xplore-core'
+
+// Get compatible nodes for specific chains
+const solanaNodes = CHAIN_NODE_COMPATIBILITY.sol
+console.log(solanaNodes) // [BridgeNodes.RELAY, BridgeNodes.DEBRIDGE, BridgeNodes.ACROSS]
+
+const bitcoinNodes = CHAIN_NODE_COMPATIBILITY.btc
+console.log(bitcoinNodes) // [BridgeNodes.THORCHAIN, BridgeNodes.RELAY]
+
+// Default compatibility (EVM chains)
+const defaultNodes = CHAIN_NODE_COMPATIBILITY.default
+```
+
+## Type Safety
+
+Take advantage of TypeScript's type system:
+
+```typescript
+// Type guards provide type narrowing
+function processNode(node: AvailableNodes) {
+  if (isBridgeNode(node)) {
+    // node is now typed as BridgeNodes
+    console.log(`Processing bridge: ${node}`)
+  } else if (isExchangeNode(node)) {
+    // node is now typed as ExchangeNodes
+    console.log(`Processing exchange: ${node}`)
+  }
+}
+
+// Union types allow flexible parameters
+type NodeUnion = BridgeNodes | ExchangeNodes
+function handleAnyNode(node: NodeUnion) {
+  return getNodeDisplayName(node)
+}
+```
+
+## Next Steps
+
+- Learn more about [Node Types](/concepts/node-types)
+- Explore [Bridges vs Exchanges](/concepts/bridges-vs-exchanges)
+- Check out the complete [API Reference](/api/node-types)

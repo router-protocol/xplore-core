@@ -1,0 +1,296 @@
+# Node Constants API Reference
+
+Complete API reference for node-related constants and mappings.
+
+## Display Names
+
+### `NodeDisplayNames`
+
+Human-readable display names for each routing node.
+
+```typescript
+const NodeDisplayNames: Record<AvailableNodes, string>
+```
+
+**Description:**
+Provides user-friendly display names for all nodes, suitable for UI presentation and user-facing messages.
+
+**Values:**
+
+| Node | Display Name |
+|------|--------------|
+| `BridgeNodes.RELAY` | `"Relay"` |
+| `BridgeNodes.DEBRIDGE` | `"deBridge"` |
+| `BridgeNodes.ACROSS` | `"Across"` |
+| `BridgeNodes.THORCHAIN` | `"THORChain"` |
+| `BridgeNodes.STARGATE_TAXI` | `"Stargate Taxi"` |
+| `BridgeNodes.MAYAN_FMCTP` | `"Mayan Using CCTP"` |
+| `BridgeNodes.MAYAN_SWIFT` | `"Mayan Swift"` |
+| `BridgeNodes.GASZIP_NATIVE` | `"GasZip"` |
+| `ExchangeNodes.OPENOCEAN` | `"OpenOcean"` |
+
+**Example:**
+```typescript
+import { NodeDisplayNames, BridgeNodes } from '@routerprotocol/xplore-core'
+
+const displayName = NodeDisplayNames[BridgeNodes.RELAY]
+console.log(displayName) // "Relay"
+
+// UI usage
+function renderNodeOption(node: AvailableNodes) {
+  return `<option value="${node}">${NodeDisplayNames[node]}</option>`
+}
+```
+
+---
+
+## Node Categorization
+
+### `NODE_CATEGORIES`
+
+Maps each node to its category (bridge or exchange).
+
+```typescript
+const NODE_CATEGORIES: Record<AvailableNodes, NodeCategory>
+```
+
+**Description:**
+Provides the category classification for each node, enabling runtime category checking and filtering.
+
+**Values:**
+
+| Node | Category |
+|------|----------|
+| `BridgeNodes.RELAY` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.DEBRIDGE` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.ACROSS` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.THORCHAIN` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.STARGATE_TAXI` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.MAYAN_FMCTP` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.MAYAN_SWIFT` | `NodeCategory.BRIDGE` |
+| `BridgeNodes.GASZIP_NATIVE` | `NodeCategory.BRIDGE` |
+| `ExchangeNodes.OPENOCEAN` | `NodeCategory.EXCHANGE` |
+
+**Example:**
+```typescript
+import { NODE_CATEGORIES, BridgeNodes, NodeCategory } from '@routerprotocol/xplore-core'
+
+const category = NODE_CATEGORIES[BridgeNodes.RELAY]
+console.log(category) // "bridge"
+
+// Filtering by category
+function getNodesByCategory(targetCategory: NodeCategory): AvailableNodes[] {
+  return Object.entries(NODE_CATEGORIES)
+    .filter(([node, category]) => category === targetCategory)
+    .map(([node]) => node as AvailableNodes)
+}
+
+const bridges = getNodesByCategory(NodeCategory.BRIDGE)
+```
+
+---
+
+## Chain Compatibility
+
+### `CHAIN_NODE_COMPATIBILITY`
+
+Maps chain types to compatible routing nodes.
+
+```typescript
+const CHAIN_NODE_COMPATIBILITY: Record<string, AvailableNodes[]>
+```
+
+**Description:**
+Defines which nodes can be used with specific blockchain types. Ensures you only attempt to use protocols that actually support your target chains.
+
+**Chain Types:**
+
+#### `sol` (Solana)
+```typescript
+CHAIN_NODE_COMPATIBILITY.sol = [
+  BridgeNodes.RELAY,
+  BridgeNodes.DEBRIDGE,
+  BridgeNodes.ACROSS
+]
+```
+
+#### `sui` (Sui)
+```typescript
+CHAIN_NODE_COMPATIBILITY.sui = [
+  BridgeNodes.RELAY
+]
+```
+
+#### `btc` (Bitcoin)
+```typescript
+CHAIN_NODE_COMPATIBILITY.btc = [
+  BridgeNodes.THORCHAIN,
+  BridgeNodes.RELAY
+]
+```
+
+#### `default` (EVM Chains)
+```typescript
+CHAIN_NODE_COMPATIBILITY.default = [
+  BridgeNodes.RELAY,
+  BridgeNodes.DEBRIDGE,
+  BridgeNodes.ACROSS,
+  BridgeNodes.THORCHAIN,
+  BridgeNodes.STARGATE_TAXI,
+  BridgeNodes.MAYAN_FMCTP,
+  BridgeNodes.MAYAN_SWIFT,
+  BridgeNodes.GASZIP_NATIVE,
+  ExchangeNodes.OPENOCEAN
+]
+```
+
+**Example:**
+```typescript
+import { CHAIN_NODE_COMPATIBILITY } from '@routerprotocol/xplore-core'
+
+// Get compatible nodes for Solana
+const solanaNodes = CHAIN_NODE_COMPATIBILITY.sol
+console.log(solanaNodes) // [BridgeNodes.RELAY, BridgeNodes.DEBRIDGE, BridgeNodes.ACROSS]
+
+// Get compatible nodes for Ethereum (uses default)
+const ethNodes = CHAIN_NODE_COMPATIBILITY.default
+
+// Helper function
+function getCompatibleNodes(chainType: string): AvailableNodes[] {
+  return CHAIN_NODE_COMPATIBILITY[chainType] || CHAIN_NODE_COMPATIBILITY.default
+}
+```
+
+---
+
+## Usage Patterns
+
+### Display Name Lookup
+
+```typescript
+import { NodeDisplayNames, getNodeDisplayName } from '@routerprotocol/xplore-core'
+
+// Direct lookup
+const directName = NodeDisplayNames[BridgeNodes.RELAY]
+
+// Using utility function (with fallback)
+const utilityName = getNodeDisplayName(BridgeNodes.RELAY)
+
+// Bulk display name mapping
+function createNodeOptions(nodes: AvailableNodes[]) {
+  return nodes.map(node => ({
+    value: node,
+    label: NodeDisplayNames[node],
+    category: NODE_CATEGORIES[node]
+  }))
+}
+```
+
+### Category-Based Filtering
+
+```typescript
+import { NODE_CATEGORIES, NodeCategory } from '@routerprotocol/xplore-core'
+
+// Filter nodes by category
+function filterByCategory(
+  nodes: AvailableNodes[],
+  category: NodeCategory
+): AvailableNodes[] {
+  return nodes.filter(node => NODE_CATEGORIES[node] === category)
+}
+
+// Get all bridges
+const allNodes = Object.keys(NODE_CATEGORIES) as AvailableNodes[]
+const bridges = filterByCategory(allNodes, NodeCategory.BRIDGE)
+const exchanges = filterByCategory(allNodes, NodeCategory.EXCHANGE)
+```
+
+### Chain Compatibility Checking
+
+```typescript
+import { CHAIN_NODE_COMPATIBILITY } from '@routerprotocol/xplore-core'
+
+// Check if node supports a specific chain
+function isNodeCompatible(node: AvailableNodes, chainType: string): boolean {
+  const compatibleNodes = CHAIN_NODE_COMPATIBILITY[chainType] ||
+                          CHAIN_NODE_COMPATIBILITY.default
+  return compatibleNodes.includes(node)
+}
+
+// Get intersection of compatible nodes for two chains
+function getCrossChainNodes(chainA: string, chainB: string): AvailableNodes[] {
+  const nodesA = CHAIN_NODE_COMPATIBILITY[chainA] || CHAIN_NODE_COMPATIBILITY.default
+  const nodesB = CHAIN_NODE_COMPATIBILITY[chainB] || CHAIN_NODE_COMPATIBILITY.default
+
+  return nodesA.filter(node => nodesB.includes(node))
+}
+
+// Usage
+const ethToSolNodes = getCrossChainNodes('eth', 'sol')
+const btcToEthNodes = getCrossChainNodes('btc', 'eth')
+```
+
+### Complete Node Information
+
+```typescript
+function getNodeInfo(node: AvailableNodes) {
+  return {
+    id: node,
+    displayName: NodeDisplayNames[node],
+    category: NODE_CATEGORIES[node],
+    supportedChains: Object.entries(CHAIN_NODE_COMPATIBILITY)
+      .filter(([chain, nodes]) => nodes.includes(node))
+      .map(([chain]) => chain),
+    isBridge: NODE_CATEGORIES[node] === NodeCategory.BRIDGE,
+    isExchange: NODE_CATEGORIES[node] === NodeCategory.EXCHANGE
+  }
+}
+
+// Usage
+const relayInfo = getNodeInfo(BridgeNodes.RELAY)
+console.log(relayInfo)
+/*
+{
+  id: "relay",
+  displayName: "Relay",
+  category: "bridge",
+  supportedChains: ["sol", "sui", "btc", "default"],
+  isBridge: true,
+  isExchange: false
+}
+*/
+```
+
+### UI Component Helpers
+
+```typescript
+// Generate select options for UI
+function generateNodeSelectOptions(
+  chainType?: string,
+  category?: NodeCategory
+) {
+  let nodes: AvailableNodes[]
+
+  if (chainType) {
+    nodes = CHAIN_NODE_COMPATIBILITY[chainType] || CHAIN_NODE_COMPATIBILITY.default
+  } else {
+    nodes = Object.keys(NODE_CATEGORIES) as AvailableNodes[]
+  }
+
+  if (category) {
+    nodes = nodes.filter(node => NODE_CATEGORIES[node] === category)
+  }
+
+  return nodes.map(node => ({
+    value: node,
+    label: NodeDisplayNames[node],
+    category: NODE_CATEGORIES[node]
+  }))
+}
+
+// Examples
+const allOptions = generateNodeSelectOptions()
+const solanaOptions = generateNodeSelectOptions('sol')
+const bridgeOptions = generateNodeSelectOptions(undefined, NodeCategory.BRIDGE)
+const solanaBridges = generateNodeSelectOptions('sol', NodeCategory.BRIDGE)
+```

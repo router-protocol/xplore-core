@@ -1,0 +1,232 @@
+# Bridges vs Exchanges
+
+Understanding the fundamental differences between bridge and exchange nodes.
+
+## Core Differences
+
+### Bridge Nodes
+**Purpose**: Cross-chain token transfers
+**Primary Function**: Move tokens between different blockchain networks
+**Use Case**: When you need to transfer assets from one chain to another
+
+### Exchange Nodes
+**Purpose**: Optimal trading routes
+**Primary Function**: Find best prices and routes for token swaps
+**Use Case**: When you need to exchange one token for another, potentially across chains
+
+## Detailed Comparison
+
+| Aspect | Bridges | Exchanges |
+|--------|---------|-----------|
+| **Primary Goal** | Cross-chain asset transfer | Optimal token swapping |
+| **Input/Output** | Same token on different chains | Different tokens (same/different chains) |
+| **Optimization** | Security, speed, cost | Price, slippage, liquidity |
+| **Liquidity Model** | Locked/minted tokens | DEX aggregation |
+| **Risk Profile** | Bridge security, validator sets | Smart contract, impermanent loss |
+
+## Bridge Operations
+
+Bridges focus on moving assets between blockchain networks:
+
+```typescript
+import { BridgeNodes, isBridgeNode } from '@routerprotocol/xplore-core'
+
+// Bridge operation example
+const bridgeNode = BridgeNodes.RELAY
+
+if (isBridgeNode(bridgeNode)) {
+  // Bridge-specific operations
+  const bridgeConfig = {
+    sourceChain: 'ethereum',
+    targetChain: 'polygon',
+    token: 'USDC',
+    amount: '1000'
+  }
+
+  // The same USDC token, just on different chains
+  console.log('Bridging USDC from Ethereum to Polygon')
+}
+```
+
+### Bridge Characteristics
+
+- **Asset Preservation**: Same token on different chains
+- **Cross-Chain Focus**: Primary purpose is chain bridging
+- **Security Model**: Relies on bridge validators/relayers
+- **Time Consideration**: May have confirmation delays
+- **Fee Structure**: Bridge fees + gas on both chains
+
+### Supported Bridge Protocols
+
+```typescript
+// Multi-chain bridges
+BridgeNodes.RELAY        // EVM, Solana, Sui, Bitcoin
+BridgeNodes.THORCHAIN    // Bitcoin, EVM chains
+
+// EVM-focused bridges
+BridgeNodes.DEBRIDGE     // Cross-chain liquidity
+BridgeNodes.ACROSS       // Optimistic bridging
+BridgeNodes.STARGATE_TAXI // LayerZero-based
+
+// Specialized bridges
+BridgeNodes.MAYAN_FMCTP  // Circle's CCTP
+BridgeNodes.MAYAN_SWIFT  // Fast transfers
+BridgeNodes.GASZIP_NATIVE // Gas optimization
+```
+
+## Exchange Operations
+
+Exchanges focus on finding optimal trading routes:
+
+```typescript
+import { ExchangeNodes, isExchangeNode } from '@routerprotocol/xplore-core'
+
+// Exchange operation example
+const exchangeNode = ExchangeNodes.OPENOCEAN
+
+if (isExchangeNode(exchangeNode)) {
+  // Exchange-specific operations
+  const swapConfig = {
+    inputToken: 'USDC',
+    outputToken: 'ETH',
+    inputAmount: '1000',
+    slippageTolerance: '0.5%'
+  }
+
+  // Different tokens - optimizing for best price
+  console.log('Swapping USDC for ETH with optimal routing')
+}
+```
+
+### Exchange Characteristics
+
+- **Token Transformation**: Convert one token to another
+- **Price Optimization**: Find best rates across DEXs
+- **Liquidity Aggregation**: Access multiple liquidity sources
+- **MEV Protection**: Advanced routing to minimize MEV
+- **Cross-Chain Capability**: Some exchanges route across chains
+
+### Supported Exchange Protocols
+
+```typescript
+// DEX Aggregators
+ExchangeNodes.OPENOCEAN  // Multi-chain DEX aggregation
+// Future: More exchanges can be added
+```
+
+## Use Case Decision Matrix
+
+### Choose Bridges When:
+
+- ✅ You want the same token on a different chain
+- ✅ You need to move assets for deployment/usage on another chain
+- ✅ You're migrating liquidity between chains
+- ✅ You need native token transfers (like ETH → ETH)
+
+### Choose Exchanges When:
+
+- ✅ You want to swap one token for another
+- ✅ You need optimal pricing across multiple DEXs
+- ✅ You want to minimize slippage and maximize output
+- ✅ You need complex routing through multiple pools
+
+## Hybrid Operations
+
+Some protocols blur the lines by offering both capabilities:
+
+```typescript
+import { getNodeCategory, NodeCategory } from '@routerprotocol/xplore-core'
+
+function determineOperation(node: AvailableNodes, operation: 'bridge' | 'swap') {
+  const category = getNodeCategory(node)
+
+  if (operation === 'bridge' && category === NodeCategory.BRIDGE) {
+    return 'Direct bridge operation'
+  } else if (operation === 'swap' && category === NodeCategory.EXCHANGE) {
+    return 'Direct swap operation'
+  } else {
+    return 'Check if protocol supports cross-category operations'
+  }
+}
+```
+
+## Implementation Patterns
+
+### Type-Safe Protocol Selection
+
+```typescript
+// Function that only accepts appropriate node types
+function executeBridge(
+  bridge: BridgeNodes,
+  params: BridgeParams
+): Promise<BridgeResult> {
+  // Bridge-specific implementation
+}
+
+function executeSwap(
+  exchange: ExchangeNodes,
+  params: SwapParams
+): Promise<SwapResult> {
+  // Exchange-specific implementation
+}
+
+// Unified interface with type checking
+function executeOperation(
+  node: AvailableNodes,
+  operation: 'bridge' | 'swap',
+  params: any
+) {
+  if (operation === 'bridge' && isBridgeNode(node)) {
+    return executeBridge(node, params)
+  } else if (operation === 'swap' && isExchangeNode(node)) {
+    return executeSwap(node, params)
+  } else {
+    throw new Error('Invalid node type for operation')
+  }
+}
+```
+
+### Protocol Capability Checking
+
+```typescript
+function getProtocolCapabilities(node: AvailableNodes) {
+  const category = getNodeCategory(node)
+
+  return {
+    canBridge: category === NodeCategory.BRIDGE,
+    canSwap: category === NodeCategory.EXCHANGE,
+    displayName: getNodeDisplayName(node),
+    category
+  }
+}
+```
+
+## Best Practices
+
+### Clear Intention
+
+```typescript
+// Good: Clear about the operation type
+const bridgeResult = await executeBridge(BridgeNodes.RELAY, bridgeParams)
+const swapResult = await executeSwap(ExchangeNodes.OPENOCEAN, swapParams)
+
+// Avoid: Ambiguous operations
+const result = await execute(someNode, ambiguousParams)
+```
+
+### Type Guards for Safety
+
+```typescript
+// Good: Use type guards for runtime safety
+function processProtocol(node: AvailableNodes, userIntent: string) {
+  if (userIntent === 'bridge' && isBridgeNode(node)) {
+    // Safe to use bridge-specific logic
+    return handleBridgeOperation(node)
+  } else if (userIntent === 'swap' && isExchangeNode(node)) {
+    // Safe to use exchange-specific logic
+    return handleSwapOperation(node)
+  } else {
+    throw new Error(`Cannot perform ${userIntent} with ${node}`)
+  }
+}
+```

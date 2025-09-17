@@ -1,0 +1,305 @@
+# Chain Compatibility
+
+Understanding which nodes work with which blockchain networks.
+
+## Overview
+
+Router Aggregator Core includes built-in chain compatibility mappings that define which routing nodes can be used with specific blockchain types. This ensures you only attempt to use protocols that actually support your target chains.
+
+## Compatibility Mapping
+
+```typescript
+import { CHAIN_NODE_COMPATIBILITY } from '@routerprotocol/xplore-core'
+
+// Chain-specific compatibility
+const solanaNodes = CHAIN_NODE_COMPATIBILITY.sol
+const suiNodes = CHAIN_NODE_COMPATIBILITY.sui
+const bitcoinNodes = CHAIN_NODE_COMPATIBILITY.btc
+const defaultNodes = CHAIN_NODE_COMPATIBILITY.default // EVM chains
+```
+
+## Supported Chain Types
+
+### Solana (`sol`)
+
+```typescript
+const solanaCompatible = [
+  BridgeNodes.RELAY,
+  BridgeNodes.DEBRIDGE,
+  BridgeNodes.ACROSS
+]
+```
+
+**Characteristics:**
+- High-performance blockchain with unique architecture
+- Requires specialized bridge implementations
+- Growing DeFi ecosystem
+
+### Sui (`sui`)
+
+```typescript
+const suiCompatible = [
+  BridgeNodes.RELAY
+]
+```
+
+**Characteristics:**
+- Move-based blockchain with object-centric design
+- Limited bridge support due to newer ecosystem
+- Relay provides primary cross-chain connectivity
+
+### Bitcoin (`btc`)
+
+```typescript
+const bitcoinCompatible = [
+  BridgeNodes.THORCHAIN,
+  BridgeNodes.RELAY
+]
+```
+
+**Characteristics:**
+- UTXO-based, no smart contracts
+- Requires specialized bridge architecture
+- THORChain provides native Bitcoin support
+- Relay offers multi-chain connectivity
+
+### EVM Chains (`default`)
+
+```typescript
+const evmCompatible = [
+  BridgeNodes.RELAY,
+  BridgeNodes.DEBRIDGE,
+  BridgeNodes.ACROSS,
+  BridgeNodes.THORCHAIN,
+  BridgeNodes.STARGATE_TAXI,
+  BridgeNodes.MAYAN_FMCTP,
+  BridgeNodes.MAYAN_SWIFT,
+  BridgeNodes.GASZIP_NATIVE,
+  ExchangeNodes.OPENOCEAN
+]
+```
+
+**Characteristics:**
+- Smart contract support
+- Broad protocol compatibility
+- Most mature cross-chain ecosystem
+
+## Usage Patterns
+
+### Chain-Specific Node Selection
+
+```typescript
+import { CHAIN_NODE_COMPATIBILITY } from '@routerprotocol/xplore-core'
+
+function getCompatibleNodes(chainType: string): AvailableNodes[] {
+  return CHAIN_NODE_COMPATIBILITY[chainType] || CHAIN_NODE_COMPATIBILITY.default
+}
+
+// Get nodes for specific chains
+const solanaNodes = getCompatibleNodes('sol')
+const ethereumNodes = getCompatibleNodes('eth') // Uses default
+const polygonNodes = getCompatibleNodes('polygon') // Uses default
+```
+
+### Filtering by Capability
+
+```typescript
+function getBridgesForChain(chainType: string): BridgeNodes[] {
+  const compatibleNodes = getCompatibleNodes(chainType)
+  return compatibleNodes.filter(isBridgeNode)
+}
+
+function getExchangesForChain(chainType: string): ExchangeNodes[] {
+  const compatibleNodes = getCompatibleNodes(chainType)
+  return compatibleNodes.filter(isExchangeNode)
+}
+
+// Usage
+const solanaBridges = getBridgesForChain('sol')
+const evmExchanges = getExchangesForChain('eth')
+```
+
+## Protocol Capabilities by Chain
+
+### Multi-Chain Protocols
+
+#### Relay
+- **Chains**: EVM, Solana, Sui, Bitcoin
+- **Type**: Bridge
+- **Strengths**: Broadest chain support, unified interface
+
+#### THORChain
+- **Chains**: Bitcoin, EVM chains
+- **Type**: Bridge
+- **Strengths**: Native Bitcoin support, no wrapped tokens
+
+### EVM-Focused Protocols
+
+#### deBridge
+- **Chains**: Multiple EVM networks
+- **Type**: Bridge
+- **Strengths**: Deep liquidity, fast finality
+
+#### Across
+- **Chains**: EVM networks, Solana
+- **Type**: Bridge
+- **Strengths**: Optimistic verification, capital efficiency
+
+#### Stargate Taxi
+- **Chains**: EVM networks
+- **Type**: Bridge
+- **Strengths**: LayerZero infrastructure, instant finality
+
+### Specialized Protocols
+
+#### Mayan CCTP
+- **Chains**: EVM networks with Circle support
+- **Type**: Bridge
+- **Strengths**: Native USDC transfers, institutional grade
+
+#### OpenOcean
+- **Chains**: EVM networks
+- **Type**: Exchange
+- **Strengths**: DEX aggregation, optimal routing
+
+## Validation Helpers
+
+### Check Node Compatibility
+
+```typescript
+function isNodeCompatibleWithChain(
+  node: AvailableNodes,
+  chainType: string
+): boolean {
+  const compatibleNodes = CHAIN_NODE_COMPATIBILITY[chainType] ||
+                          CHAIN_NODE_COMPATIBILITY.default
+  return compatibleNodes.includes(node)
+}
+
+// Usage
+const canUseRelay = isNodeCompatibleWithChain(BridgeNodes.RELAY, 'sol') // true
+const canUseThor = isNodeCompatibleWithChain(BridgeNodes.THORCHAIN, 'sol') // false
+```
+
+### Get Compatible Protocols
+
+```typescript
+function getProtocolsForChainPair(
+  sourceChain: string,
+  targetChain: string
+): AvailableNodes[] {
+  const sourceNodes = getCompatibleNodes(sourceChain)
+  const targetNodes = getCompatibleNodes(targetChain)
+
+  // Return intersection of compatible nodes
+  return sourceNodes.filter(node => targetNodes.includes(node))
+}
+
+// Find protocols that work for specific chain pairs
+const ethToSolana = getProtocolsForChainPair('eth', 'sol')
+const btcToEth = getProtocolsForChainPair('btc', 'eth')
+```
+
+## Chain Type Detection
+
+### EVM Chain Detection
+
+```typescript
+const EVM_CHAINS = [
+  'ethereum', 'eth',
+  'polygon', 'matic',
+  'arbitrum', 'arb',
+  'optimism', 'op',
+  'base',
+  'avalanche', 'avax',
+  'bsc', 'bnb'
+]
+
+function isEVMChain(chainType: string): boolean {
+  return EVM_CHAINS.includes(chainType.toLowerCase())
+}
+
+function getChainCompatibility(chainType: string) {
+  const normalizedChain = chainType.toLowerCase()
+
+  if (normalizedChain === 'sol' || normalizedChain === 'solana') {
+    return CHAIN_NODE_COMPATIBILITY.sol
+  } else if (normalizedChain === 'sui') {
+    return CHAIN_NODE_COMPATIBILITY.sui
+  } else if (normalizedChain === 'btc' || normalizedChain === 'bitcoin') {
+    return CHAIN_NODE_COMPATIBILITY.btc
+  } else if (isEVMChain(normalizedChain)) {
+    return CHAIN_NODE_COMPATIBILITY.default
+  } else {
+    // Unknown chain, default to EVM compatibility
+    return CHAIN_NODE_COMPATIBILITY.default
+  }
+}
+```
+
+## Best Practices
+
+### Always Validate Compatibility
+
+```typescript
+// Good: Check compatibility before attempting operations
+function bridgeTokens(
+  sourceChain: string,
+  targetChain: string,
+  preferredNode?: BridgeNodes
+) {
+  const compatibleNodes = getProtocolsForChainPair(sourceChain, targetChain)
+                          .filter(isBridgeNode)
+
+  if (compatibleNodes.length === 0) {
+    throw new Error(`No compatible bridges for ${sourceChain} -> ${targetChain}`)
+  }
+
+  const selectedNode = preferredNode && compatibleNodes.includes(preferredNode)
+    ? preferredNode
+    : compatibleNodes[0]
+
+  return executeBridge(selectedNode as BridgeNodes, /* params */)
+}
+```
+
+### Provide Fallback Options
+
+```typescript
+function getRecommendedProtocols(chainType: string) {
+  const compatible = getCompatibleNodes(chainType)
+
+  return {
+    primary: compatible[0], // Most recommended
+    alternatives: compatible.slice(1), // Other options
+    bridges: compatible.filter(isBridgeNode),
+    exchanges: compatible.filter(isExchangeNode)
+  }
+}
+```
+
+### Chain-Aware UI
+
+```typescript
+function getAvailableOptionsForUser(
+  sourceChain: string,
+  targetChain: string,
+  operationType: 'bridge' | 'swap'
+) {
+  const compatibleNodes = getProtocolsForChainPair(sourceChain, targetChain)
+
+  if (operationType === 'bridge') {
+    return compatibleNodes.filter(isBridgeNode).map(node => ({
+      node,
+      displayName: getNodeDisplayName(node),
+      category: 'Bridge'
+    }))
+  } else {
+    return compatibleNodes.filter(isExchangeNode).map(node => ({
+      node,
+      displayName: getNodeDisplayName(node),
+      category: 'Exchange'
+    }))
+  }
+}
+```
